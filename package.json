@@ -6,7 +6,7 @@
   "types": "dist/index.d.ts",
   "license": "MIT",
   "author": "Pedro Alves <pedro.m.develop@gmail.com>",
-  "homepage": "https://github.com/pedromdev/aws-serverless-rxjs#readme",
+  "homepage": "https://github.com/pedromdev/aws-lambda-rxjs#readme",
   "keywords": [
     "aws",
     "lambda",
