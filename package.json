@@ -18,7 +18,8 @@
     "prepublish": "npm run build",
     "test": "jest",
     "test:watch": "jest --watchAll",
-    "test:cov": "jest --coverage"
+    "test:cov": "jest --coverage",
+    "test:cov:watch": "jest --coverage --watchAll"
   },
   "files": [
     "dist/"
