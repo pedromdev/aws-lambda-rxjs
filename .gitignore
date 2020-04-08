@@ -1,0 +1,15 @@
+.idea
+.vscode
+
+# package directoriesX
+node_modules
+jspm_packages
+
+# Serverless directories
+.serverless
+
+# Tests
+coverage
+
+# Build
+dist

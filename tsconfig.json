@@ -1,0 +1,24 @@
+{
+  "compilerOptions": {
+    "declaration": true,
+    "preserveConstEnums": true,
+    "strictNullChecks": true,
+    "sourceMap": true,
+    "allowJs": true,
+    "target": "es5",
+    "outDir": "dist",
+    "moduleResolution": "node",
+    "lib": ["es2015"],
+    "baseUrl": ".",
+    "paths": {
+      "aws-lambda-rxjs": ["./src/index"],
+      "aws-lambda-rxjs/operators": ["./src/operators/index"]
+    }
+  },
+  "exclude": [
+    "node_modules",
+    "coverage",
+    "dist",
+    "**/*.spec.ts"
+  ]
+}
