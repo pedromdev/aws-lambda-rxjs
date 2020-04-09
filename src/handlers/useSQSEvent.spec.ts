@@ -1,10 +1,10 @@
 import {useSQSEvent} from "./useSQSEvent";
 import {map} from "rxjs/operators";
-import {eventDetail, matchSource, recordBody} from "../operators";
+import {eventDetail, mapRequest, matchSource, recordBody} from "../operators";
 import {ScheduledEvent, SQSRecord} from "aws-lambda";
 import {merge} from "rxjs";
 
-const createRecord = body => ({
+const createRecord = (body: any = null) => ({
   body: JSON.stringify(body),
   messageId: "1",
   attributes: {
@@ -120,6 +120,30 @@ describe('useSQSEvent', () => {
     expect(response.body[0]).toEqual(5);
     expect(response.body[1]).toEqual(14);
     expect(response.body[2]).toEqual(39);
+  });
+
+  it('should map an AWS request', async () => {
+    const promise = jest.fn(async () => 13);
+    const awsRequest = {promise};
+    const mapRequestHandler = jest.fn(() => awsRequest);
+    const eventHandler = useSQSEvent(observable => observable
+      .pipe(
+        recordBody(),
+        mapRequest<number>(mapRequestHandler)
+      )
+    );
+
+    const response = await eventHandler({
+      Records: [
+        createRecord(2),
+      ]
+    });
+
+    expect(promise).toHaveBeenCalledTimes(1);
+    expect(mapRequestHandler).toHaveBeenCalledTimes(1);
+    expect(mapRequestHandler).toHaveBeenCalledWith(2);
+    expect(response.body.length).toEqual(1);
+    expect(response.body[0]).toEqual(13);
   });
 
 });
