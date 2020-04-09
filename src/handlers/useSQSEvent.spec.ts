@@ -2,6 +2,7 @@ import {useSQSEvent} from "./useSQSEvent";
 import {map} from "rxjs/operators";
 import {eventDetail, matchSource, recordBody} from "../operators";
 import {ScheduledEvent, SQSRecord} from "aws-lambda";
+import {merge} from "rxjs";
 
 const createRecord = body => ({
   body: JSON.stringify(body),
@@ -78,6 +79,47 @@ describe('useSQSEvent', () => {
     expect(Array.isArray(response.body)).toBeTruthy();
     expect(response.body.length).toEqual(1);
     expect(response.body[0]).toEqual(3);
+  });
+
+  it('should route events by source name', async () => {
+    const eventHandler = useSQSEvent(observable =>
+      merge(
+        observable.pipe(
+          recordBody<SQSRecord, ScheduledEvent>(),
+          matchSource('aws.sourcename'),
+          eventDetail(),
+          map(num => num * 5)
+        ),
+        observable.pipe(
+          recordBody<SQSRecord, ScheduledEvent>(),
+          matchSource('aws.sourcename1'),
+          eventDetail(),
+          map(num => num * 7)
+        ),
+        observable.pipe(
+          recordBody<SQSRecord, ScheduledEvent>(),
+          matchSource('aws.sourcename2'),
+          eventDetail(),
+          map(num => num * 13)
+        ),
+      )
+    );
+
+
+    const response = await eventHandler({
+      Records: [
+        createRecord(createEvent("aws.sourcename", 1)),
+        createRecord(createEvent("aws.sourcename1", 2)),
+        createRecord(createEvent("aws.sourcename2", 3)),
+      ]
+    });
+
+    expect(response.statusCode).toEqual(200);
+    expect(Array.isArray(response.body)).toBeTruthy();
+    expect(response.body.length).toEqual(3);
+    expect(response.body[0]).toEqual(5);
+    expect(response.body[1]).toEqual(14);
+    expect(response.body[2]).toEqual(39);
   });
 
 });
