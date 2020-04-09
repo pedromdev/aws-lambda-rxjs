@@ -1,6 +1,6 @@
 import {useSQSEvent} from "./useSQSEvent";
 import {map} from "rxjs/operators";
-import {matchSource, recordBody} from "../operators";
+import {eventDetail, matchSource, recordBody} from "../operators";
 import {ScheduledEvent, SQSRecord} from "aws-lambda";
 
 const createRecord = body => ({
@@ -21,10 +21,10 @@ const createRecord = body => ({
   receiptHandle: "receipt-handle"
 });
 
-const createEvent = (source) => ({
+const createEvent = (source, detail = {}) => ({
   account: "123456",
   region: "us-east-1",
-  detail: {},
+  detail,
   'detail-type': "Detail",
   source,
   time: "1234567890",
@@ -60,23 +60,24 @@ describe('useSQSEvent', () => {
     const eventHandler = useSQSEvent(observable => observable
       .pipe(
         recordBody<SQSRecord, ScheduledEvent>(),
-        matchSource('aws.sourcename')
+        matchSource('aws.sourcename'),
+        eventDetail()
       )
     );
 
 
     const response = await eventHandler({
       Records: [
-        createRecord(createEvent("aws.sourcename1")),
-        createRecord(createEvent("aws.sourcename2")),
-        createRecord(createEvent("aws.sourcename")),
+        createRecord(createEvent("aws.sourcename1", 1)),
+        createRecord(createEvent("aws.sourcename2", 2)),
+        createRecord(createEvent("aws.sourcename", 3)),
       ]
     });
 
     expect(response.statusCode).toEqual(200);
     expect(Array.isArray(response.body)).toBeTruthy();
     expect(response.body.length).toEqual(1);
-    expect(response.body[0].source).toEqual("aws.sourcename");
+    expect(response.body[0]).toEqual(3);
   });
 
 });
