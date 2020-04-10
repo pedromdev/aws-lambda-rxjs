@@ -12,7 +12,8 @@
     "baseUrl": ".",
     "paths": {
       "aws-lambda-rxjs": ["./src/index"],
-      "aws-lambda-rxjs/operators": ["./src/operators/index"]
+      "aws-lambda-rxjs/operators": ["./src/operators/index"],
+      "aws-lambda-rxjs/handlers": ["./src/handlers/index"]
     }
   },
   "exclude": [
