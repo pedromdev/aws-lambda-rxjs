@@ -15,7 +15,7 @@ $ yarn add aws-lambda-rxjs rxjs
 
 In your handler.js file use an AWS handler:
 
-```ecmascript 6
+```javascript
 const { map } = require('rxjs/operators');
 const { useSQSEvent } = require('aws-lambda-rxjs');
 
@@ -32,7 +32,7 @@ module.exports.hello = useSQSEvent(stream$ =>
 
 Filter by source:
 
-```ecmascript 6
+```javascript
 const { map } = require('rxjs/operators');
 const { useSQSEvent } = require('aws-lambda-rxjs');
 const { recordBody, matchSource } = require('aws-lambda-rxjs/operators');
