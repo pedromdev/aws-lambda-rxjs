@@ -1,1 +1,1 @@
-export * from './handlers/useSQSEvent';
+export * from './observable/merge';

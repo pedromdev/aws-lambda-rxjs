@@ -2,7 +2,7 @@ import {useSQSEvent} from "./useSQSEvent";
 import {map} from "rxjs/operators";
 import {eventDetail, mapRequest, matchSource, recordBody} from "../operators";
 import {ScheduledEvent, SQSRecord} from "aws-lambda";
-import {merge} from "rxjs";
+import {merge} from "..";
 
 const createRecord = (body: any = null) => ({
   body: JSON.stringify(body),
@@ -83,7 +83,7 @@ describe('useSQSEvent', () => {
 
   it('should route events by source name', async () => {
     const eventHandler = useSQSEvent(observable =>
-      merge(
+      merge([
         observable.pipe(
           recordBody<SQSRecord, ScheduledEvent>(),
           matchSource('aws.sourcename'),
@@ -102,7 +102,7 @@ describe('useSQSEvent', () => {
           eventDetail(),
           map(num => num * 13)
         ),
-      )
+      ])
     );
 
 
